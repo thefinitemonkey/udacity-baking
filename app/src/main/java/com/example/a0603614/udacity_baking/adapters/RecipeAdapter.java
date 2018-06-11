@@ -97,19 +97,19 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             Recipe recipe = mRecipeList.get(position);
             try {
                 mTitle.setText(recipe.name);
-            } catch (Error e) {
+            } catch (Exception e) {
                 mTitle.setText("");
             }
             try {
                 mServings.setText(Integer.toString(recipe.servings));
-            } catch (Error e) {
+            } catch (Exception e) {
                 mServings.setText("");
             }
             try {
                 if (!recipe.image.isEmpty()) {
                     Picasso.get().load(recipe.image).into(mImage);
                 }
-            } catch (Error e) {
+            } catch (Exception e) {
 
             }
         }
