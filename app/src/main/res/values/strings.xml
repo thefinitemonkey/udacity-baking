@@ -4,6 +4,8 @@
 
     <string name="label_servings">Servings:</string>
 
+    <string name="recipe_data_intent_extra">recipeData</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

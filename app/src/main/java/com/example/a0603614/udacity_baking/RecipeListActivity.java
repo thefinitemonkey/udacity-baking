@@ -1,5 +1,7 @@
 package com.example.a0603614.udacity_baking;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.content.res.Configuration;
@@ -13,20 +15,19 @@ import com.example.a0603614.udacity_baking.adapters.RecipeAdapter;
 import com.example.a0603614.udacity_baking.data_utils.JsonSourceLoader;
 import com.example.a0603614.udacity_baking.objects.Recipe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecipeListActivity extends AppCompatActivity implements RecipeAdapter.ListItemClickListener {
+    private static int RESULT_CODE = 1970;
     @BindView(R.id.rv_recipe_list)
     RecyclerView mRecipeRecycler;
-
     private int mRecipeLoaderId = 1969;
     private RecipeAdapter mRecipeAdapter;
     private String mJsonUri;
-
-
     private LoaderManager.LoaderCallbacks<List<Recipe>> mRecipeListLoaderCallback =
             new LoaderManager.LoaderCallbacks<List<Recipe>>() {
                 @Override
@@ -34,7 +35,8 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
                     if (id != mRecipeLoaderId) {
                         return null;
                     }
-                    return new JsonSourceLoader(RecipeListActivity.this, args.getString("queryUrl"));
+                    return new JsonSourceLoader(
+                            RecipeListActivity.this, args.getString("queryUrl"));
                 }
 
                 @Override
@@ -49,7 +51,6 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
 
                 }
             };
-
 
 
     @Override
@@ -72,7 +73,8 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
 
         // Create a gid layout manager for the display of the recycler
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount,
-                                                                    GridLayout.VERTICAL, false);
+                                                                    GridLayout.VERTICAL, false
+        );
         mRecipeRecycler.setLayoutManager(gridLayoutManager);
         mRecipeRecycler.setHasFixedSize(true);
 
@@ -86,12 +88,20 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
 
     @Override
     public void onListItemClick(int itemIndex) {
-
+        // Create the intent with the selected recipe and navigate to the steps display
+        Class destinationClass = RecipeStepsActivity.class;
+        Intent showRecipeSteps = new Intent(this, destinationClass);
+        showRecipeSteps.putExtra(
+                getResources().getString(R.string.recipe_data_intent_extra),
+                mRecipeAdapter.getRecipeObj(itemIndex)
+        );
+        startActivityForResult(showRecipeSteps, RESULT_CODE);
     }
 
     private void loadRecipeData() {
         Bundle queryBundle = new Bundle();
         queryBundle.putString("queryUrl", mJsonUri);
-        getSupportLoaderManager().restartLoader(mRecipeLoaderId, queryBundle, mRecipeListLoaderCallback);
+        getSupportLoaderManager().restartLoader(
+                mRecipeLoaderId, queryBundle, mRecipeListLoaderCallback);
     }
 }

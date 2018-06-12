@@ -3,6 +3,8 @@ package com.example.a0603614.udacity_baking.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Recipe implements Parcelable {
@@ -33,6 +35,9 @@ public class Recipe implements Parcelable {
     }
 
     public Recipe(Parcel in) {
+        ingredients = new ArrayList<Ingredient>();
+        steps = new ArrayList<Step>();
+
         id = in.readInt();
         name = in.readString();
         servings = in.readInt();
