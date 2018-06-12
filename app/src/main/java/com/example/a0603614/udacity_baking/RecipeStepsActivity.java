@@ -9,7 +9,7 @@ import android.util.Log;
 import com.example.a0603614.udacity_baking.fragments.RecipeStepListFragment;
 import com.example.a0603614.udacity_baking.objects.Recipe;
 
-public class RecipeStepsActivity extends AppCompatActivity implements RecipeStepListFragment.OnFragmentInteractionListener {
+public class RecipeStepsActivity extends AppCompatActivity implements RecipeStepListFragment.StepListClickListener {
 
     private static Recipe mRecipe;
     private static String[] mSteps;
@@ -26,7 +26,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
 
         // Build the mSteps array from the recipe data
         int stepCount = mRecipe.steps.size();
-        mSteps = new String[stepCount +1];
+        mSteps = new String[stepCount + 1];
         mSteps[0] = getResources().getString(R.string.label_step_ingredients);
         for (int i = 0; i < stepCount; i++) {
             int pos = i + 1;
@@ -52,7 +52,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onStepListClick(int position) {
+        Log.i("============>>>", "onListItemClick: " + position);
     }
 }

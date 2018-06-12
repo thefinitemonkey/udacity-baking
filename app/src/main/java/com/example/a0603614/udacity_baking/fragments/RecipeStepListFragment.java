@@ -11,10 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.a0603614.udacity_baking.R;
+import com.example.a0603614.udacity_baking.RecipeStepsActivity;
 import com.example.a0603614.udacity_baking.adapters.StepsAdapter;
 import com.example.a0603614.udacity_baking.objects.Recipe;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +26,7 @@ public class RecipeStepListFragment extends Fragment implements StepsAdapter.Lis
     RecyclerView mStepRecycler;
     private Context mContext;
     private StepsAdapter mStepsAdapter;
-    private OnFragmentInteractionListener mListener;
+    private StepListClickListener mListener;
     private String[] mSteps;
 
 
@@ -70,18 +69,11 @@ public class RecipeStepListFragment extends Fragment implements StepsAdapter.Lis
         super.onStart();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof StepListClickListener) {
+            mListener = (StepListClickListener) context;
         } else {
             throw new RuntimeException(context.toString()
                                                + " must implement OnFragmentInteractionListener");
@@ -96,7 +88,10 @@ public class RecipeStepListFragment extends Fragment implements StepsAdapter.Lis
 
     @Override
     public void onListItemClick(int position) {
-
+        // Pass the item click back to the activity for handling
+        if (mListener != null) {
+            mListener.onStepListClick(position);
+        }
     }
 
     /**
@@ -109,8 +104,8 @@ public class RecipeStepListFragment extends Fragment implements StepsAdapter.Lis
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface StepListClickListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onStepListClick(int position);
     }
 }
