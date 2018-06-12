@@ -76,11 +76,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         TextView mServings;
         @BindView(R.id.iv_recipe_image)
         ImageView mImage;
-        private Context mHolderContext;
 
         public RecipeViewHolder(View itemView) {
             super(itemView);
-            mHolderContext = itemView.getContext();
             itemView.setOnClickListener(this);
             ButterKnife.bind(this, itemView);
         }

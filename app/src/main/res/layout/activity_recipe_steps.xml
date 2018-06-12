@@ -2,15 +2,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_steps_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RecipeStepsActivity">
 
-    <fragment
-        android:id="@+id/fr_recipe_step_list"
-        android:name="com.example.a0603614.udacity_baking.fragments.RecipeStepListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="107dp"
-        tools:layout_editor_absoluteY="161dp" />
 </android.support.constraint.ConstraintLayout>
