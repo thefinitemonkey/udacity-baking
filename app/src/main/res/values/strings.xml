@@ -11,6 +11,4 @@
     <string name="label_step_ingredients">Recipe Ingredients</string>
     <string name="label_ingredients_append">\u0020Ingredients</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
