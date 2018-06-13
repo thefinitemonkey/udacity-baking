@@ -1,4 +1,4 @@
-package com.example.a0603614.udacity_baking;
+package com.example.a0603614.udacity_baking.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.a0603614.udacity_baking.R;
 import com.example.a0603614.udacity_baking.adapters.IngredientsAdapter;
 import com.example.a0603614.udacity_baking.objects.Recipe;
 

@@ -1,11 +1,14 @@
 package com.example.a0603614.udacity_baking;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.a0603614.udacity_baking.fragments.RecipeStepListFragment;
+import com.example.a0603614.udacity_baking.fragments.IngredientListFragment;
 import com.example.a0603614.udacity_baking.objects.Recipe;
+
+import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -23,11 +26,24 @@ public class DetailsActivity extends AppCompatActivity {
         mDetailType = getIntent().getStringExtra(
                 getResources().getString(R.string.recipe_data_detail_extra));
 
+        // Clear existing fragments from display
+        clearDetailScreen();
+
         // Determine the type of detail display and associated fragments
         if (mDetailType.contentEquals(getResources().getString(R.string.recipe_detail_ingredients))) {
             assembleIngredientsScreen();
         } else if (mDetailType.contentEquals(getResources().getString(R.string.recipe_detail_step))) {
             assembleStepScreen();
+        }
+    }
+
+    private void clearDetailScreen() {
+        FragmentManager fm = getSupportFragmentManager();
+        List<Fragment> frags = fm.getFragments();
+        if (frags == null) return;
+
+        for (Fragment frag: frags) {
+            fm.beginTransaction().remove(frag).commit();
         }
     }
 

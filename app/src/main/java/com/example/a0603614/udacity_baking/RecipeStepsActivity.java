@@ -61,10 +61,17 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
                 getResources().getString(R.string.recipe_data_intent_extra),
                 mRecipe
         );
-        showDetails.putExtra(
-                getResources().getString(R.string.recipe_data_detail_extra),
-                getResources().getString(R.string.recipe_detail_ingredients)
-        );
+        if (position == 0) {
+            showDetails.putExtra(
+                    getResources().getString(R.string.recipe_data_detail_extra),
+                    getResources().getString(R.string.recipe_detail_ingredients)
+            );
+        } else {
+            showDetails.putExtra(
+                    getResources().getString(R.string.recipe_data_detail_extra),
+                    getResources().getString(R.string.recipe_detail_step)
+            );
+        }
         startActivityForResult(showDetails, RESULT_CODE);
     }
 }
