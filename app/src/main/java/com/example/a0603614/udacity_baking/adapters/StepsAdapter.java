@@ -76,6 +76,8 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
         }
 
         public void bind(int position) {
+            if (mSteps == null || mSteps.length == 0) return;
+
             // Get the display text for the given position
             String step = mSteps[position];
             tvRecipeStep.setText(step);

@@ -1,5 +1,6 @@
 package com.example.a0603614.udacity_baking;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +12,9 @@ import com.example.a0603614.udacity_baking.objects.Recipe;
 
 public class RecipeStepsActivity extends AppCompatActivity implements RecipeStepListFragment.StepListClickListener {
 
+    private static final int RESULT_CODE = 2008;
     private static Recipe mRecipe;
     private static String[] mSteps;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,17 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
 
     @Override
     public void onStepListClick(int position) {
-        Log.i("============>>>", "onListItemClick: " + position);
+        // Create the intent with the selected recipe and navigate to the details display
+        Class destinationClass = DetailsActivity.class;
+        Intent showDetails = new Intent(this, destinationClass);
+        showDetails.putExtra(
+                getResources().getString(R.string.recipe_data_intent_extra),
+                mRecipe
+        );
+        showDetails.putExtra(
+                getResources().getString(R.string.recipe_data_detail_extra),
+                getResources().getString(R.string.recipe_detail_ingredients)
+        );
+        startActivityForResult(showDetails, RESULT_CODE);
     }
 }

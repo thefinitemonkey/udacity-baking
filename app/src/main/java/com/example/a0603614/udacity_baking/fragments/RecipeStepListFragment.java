@@ -56,7 +56,7 @@ public class RecipeStepListFragment extends Fragment implements StepsAdapter.Lis
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         linearLayoutManager.setReverseLayout(false);
         mStepRecycler.setLayoutManager(linearLayoutManager);
-        mStepRecycler.setHasFixedSize(true);
+        mStepRecycler.setHasFixedSize(false);
 
         return view;
     }
