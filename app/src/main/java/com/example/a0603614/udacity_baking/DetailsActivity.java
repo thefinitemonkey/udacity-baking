@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.a0603614.udacity_baking.fragments.IngredientListFragment;
+import com.example.a0603614.udacity_baking.fragments.StepDetailsFragment;
 import com.example.a0603614.udacity_baking.objects.Recipe;
+import com.example.a0603614.udacity_baking.objects.Step;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private Recipe mRecipe;
     private String mDetailType;
+    private int mStepPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +28,18 @@ public class DetailsActivity extends AppCompatActivity {
                 getResources().getString(R.string.recipe_data_intent_extra));
         mDetailType = getIntent().getStringExtra(
                 getResources().getString(R.string.recipe_data_detail_extra));
+        mStepPos = getIntent().getIntExtra(
+                getResources().getString(R.string.recipe_detail_step_position), 0);
 
         // Clear existing fragments from display
         clearDetailScreen();
 
         // Determine the type of detail display and associated fragments
-        if (mDetailType.contentEquals(getResources().getString(R.string.recipe_detail_ingredients))) {
+        if (mDetailType.contentEquals(
+                getResources().getString(R.string.recipe_detail_ingredients))) {
             assembleIngredientsScreen();
-        } else if (mDetailType.contentEquals(getResources().getString(R.string.recipe_detail_step))) {
+        } else if (mDetailType.contentEquals(
+                getResources().getString(R.string.recipe_detail_step))) {
             assembleStepScreen();
         }
     }
@@ -42,7 +49,7 @@ public class DetailsActivity extends AppCompatActivity {
         List<Fragment> frags = fm.getFragments();
         if (frags == null) return;
 
-        for (Fragment frag: frags) {
+        for (Fragment frag : frags) {
             fm.beginTransaction().remove(frag).commit();
         }
     }
@@ -68,6 +75,24 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void assembleStepScreen() {
+        // Send the step to the step detail fragment
+        Step step = mRecipe.steps.get(mStepPos);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(
+                getResources().getString(R.string.recipe_step_data_intent_extra), step);
+        StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
+        stepDetailsFragment.setArguments(bundle);
 
+        // Add the fragment to the display
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().add(R.id.cl_details_display, stepDetailsFragment).commit();
+
+        // Set the title of the screen accordingly
+        try {
+            getSupportActionBar().setTitle(
+                    mRecipe.name + getResources().getString(R.string.label_step_append));
+        } catch (Exception e) {
+
+        }
     }
 }
