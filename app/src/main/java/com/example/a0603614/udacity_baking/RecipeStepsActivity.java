@@ -1,6 +1,7 @@
 package com.example.a0603614.udacity_baking;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.net.Uri;
@@ -22,6 +23,8 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
     private Recipe mRecipe;
     private String[] mSteps;
     private boolean mIsTablet = false;
+    private int mPosition = 0;
+    private boolean mRotated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,36 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
             mSteps[pos] = mRecipe.steps.get(i).shortDescription;
         }
 
+        // Set the title of the screen to the recipe name
+        try {
+            getSupportActionBar().setTitle(mRecipe.name);
+        } catch (Exception e) {
+
+        }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("selectedPosition", mPosition);
+        outState.putBoolean("wasRotated", true);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mPosition = savedInstanceState.getInt("selectedPosition", 0);
+        mRotated = savedInstanceState.getBoolean("wasRotated", false);
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mRotated) return;
+
         // Send the list of steps to the step list fragment
         Bundle bundle = new Bundle();
         bundle.putStringArray("stepList", mSteps);
@@ -57,16 +90,10 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
         } else {
             fm.beginTransaction().add(R.id.cl_tablet_steps_list, fragStepList).commit();
         }
+
         // If we're in tablet mode then we also need to set up the details display
         if (mIsTablet) {
-            setTabletDetailsDisplay(0);
-        }
-
-        // Set the title of the screen to the recipe name
-        try {
-            getSupportActionBar().setTitle(mRecipe.name);
-        } catch (Exception e) {
-
+            setTabletDetailsDisplay(mPosition);
         }
     }
 
@@ -113,6 +140,8 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
 
     @Override
     public void onStepListClick(int position) {
+        mPosition = position;
+
         // If we're in tablet view display that version
         if (mIsTablet) {
             setTabletDetailsDisplay(position);
