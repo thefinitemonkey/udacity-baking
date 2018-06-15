@@ -3,6 +3,7 @@ package com.example.a0603614.udacity_baking.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +36,6 @@ import butterknife.ButterKnife;
 public class StepDetailsFragment extends Fragment {
     @BindView(R.id.tv_step_details_text)
     TextView mStepText;
-    @BindView(R.id.fl_step_video)
-    View mVideo;
     private SimpleExoPlayerView mExoView;
     private ExoPlayer mExoPlayer;
     private Step mRecipeStep;
@@ -60,8 +59,11 @@ public class StepDetailsFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_step_details, container, false);
+        mExoView = (SimpleExoPlayerView) view.findViewById(R.id.exo_step_video_player);
+
         ButterKnife.bind(this, view);
-        mExoView = (SimpleExoPlayerView) mVideo.findViewById(R.id.exo_step_video_player);
+
+
         initializePlayer();
 
         // Determine what items to put into the fragment view
@@ -109,7 +111,14 @@ public class StepDetailsFragment extends Fragment {
 
         } else {
             // Remove the view with the exo player
-            ((ViewGroup) mVideo.getParent()).removeView(mVideo);
+            mExoPlayer.release();
+            ((ViewGroup) mExoView.getParent()).removeView(mExoView);
+
+            // Set the text view to attach to the parent view
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mStepText.getLayoutParams();
+            View parentView = (View) mStepText.getParent();
+            params.topToTop = parentView.getId();
+            mStepText.requestLayout();
         }
         // Set the text for the step details
         mStepText.setText(mRecipeStep.description);
@@ -124,6 +133,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mExoPlayer.release();
     }
 
 }
