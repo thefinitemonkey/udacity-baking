@@ -53,6 +53,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Get the recipe object from the fragment arguments
         mRecipeStep = getArguments().getParcelable(
                 getResources().getString(R.string.recipe_step_data_intent_extra));
@@ -63,7 +64,7 @@ public class StepDetailsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-
+        // Initialize the video player
         initializePlayer();
 
         // Determine what items to put into the fragment view
