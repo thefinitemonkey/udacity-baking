@@ -24,15 +24,17 @@
 
     <ImageView
         android:id="@+id/iv_recipe_image"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:scaleType="matrix"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_recipe_name" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_recipe_name"
+        app:srcCompat="@drawable/ic_no_image" />
 
     <LinearLayout
         android:layout_width="wrap_content"
