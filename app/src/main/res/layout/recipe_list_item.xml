@@ -32,8 +32,7 @@
         android:scaleType="matrix"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_recipe_name"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_recipe_name" />
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.a0603614.udacity_baking.R;
@@ -29,6 +30,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +38,8 @@ import butterknife.ButterKnife;
 public class StepDetailsFragment extends Fragment {
     @BindView(R.id.tv_step_details_text)
     TextView mStepText;
+    @BindView(R.id.iv_step_image)
+    ImageView mRecipeImage;
     private SimpleExoPlayerView mExoView;
     private ExoPlayer mExoPlayer;
     private Step mRecipeStep;
@@ -75,6 +79,15 @@ public class StepDetailsFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mExoPlayer != null) {
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
+    }
+
     private void initializePlayer() {
         // Create default track selector
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -93,6 +106,7 @@ public class StepDetailsFragment extends Fragment {
         // If the step has video set the video. Otherwise remove it from the fragment.
         Context context = getActivity();
         if (mRecipeStep.videoURL != null && !mRecipeStep.videoURL.isEmpty()) {
+
             // Create DataSource instance for video
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
                     getActivity(), Util.getUserAgent(
@@ -108,7 +122,7 @@ public class StepDetailsFragment extends Fragment {
 
             // Prepare the player with the source
             mExoPlayer.prepare(videoSource);
-            mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.setPlayWhenReady(false);
 
         } else {
             // Remove the view with the exo player
@@ -121,6 +135,14 @@ public class StepDetailsFragment extends Fragment {
             params.topToTop = parentView.getId();
             mStepText.requestLayout();
         }
+
+        // If this step has a thumbnail image then set the image. Otherwise remove it from the step.
+        if (mRecipeStep.thumbnailURL != null && !mRecipeStep.thumbnailURL.isEmpty()) {
+            Picasso.get().load(mRecipeStep.thumbnailURL).into(mRecipeImage);
+        } else {
+            ((ViewGroup) mRecipeImage.getParent()).removeView(mRecipeImage);
+        }
+
         // Set the text for the step details
         mStepText.setText(mRecipeStep.description);
 
@@ -134,7 +156,10 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mExoPlayer.release();
+        if (mExoPlayer != null) {
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
 }

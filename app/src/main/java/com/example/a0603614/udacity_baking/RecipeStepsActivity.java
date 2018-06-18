@@ -85,8 +85,12 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
 
         // Add the  step list fragment to the appropriate display
         FragmentManager fm = getSupportFragmentManager();
+        // Get all the fragments in the display
+        List<Fragment> frags = fm.getFragments();
         if (!mIsTablet) {
-            fm.beginTransaction().add(R.id.cl_steps_list, fragStepList).commit();
+            if (frags.size() == 0) {
+                fm.beginTransaction().add(R.id.cl_steps_list, fragStepList).commit();
+            }
         } else {
             fm.beginTransaction().add(R.id.cl_tablet_steps_list, fragStepList).commit();
         }
@@ -122,7 +126,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
     }
 
     private void clearDetailFragment() {
-        // Remove all the fragments from the table detail display
+        // Remove all the fragments from the tablet detail display
         FragmentManager fm = getSupportFragmentManager();
         List<Fragment> frags = fm.getFragments();
         if (frags == null) return;

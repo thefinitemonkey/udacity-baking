@@ -104,9 +104,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 mServings.setText("");
             }
             try {
-                if (!recipe.image.isEmpty()) {
-                    Picasso.get().load(recipe.image).into(mImage);
-                }
+                Picasso.get().load(recipe.image).placeholder(R.drawable.ic_no_image).error(
+                      R.drawable.ic_no_image).into(mImage);
             } catch (Exception e) {
 
             }
