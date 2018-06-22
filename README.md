@@ -13,11 +13,11 @@ This code covers the Baking App project for the Udacity Android Developer course
 * Uses fragments to display mobile and tablet layouts appropriate for screen size and according to master / detail principles
 * Performs automated testing scenarios
 * Utilizes the following third-party libraries
-** Okio
-** OkHTTP
-** Moshi
-** ButterKnife
-** Picasso
+ * Okio
+ * OkHTTP
+ * Moshi
+ * ButterKnife
+ * Picasso
 
 
 ## How to view
