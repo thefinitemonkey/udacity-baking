@@ -3,7 +3,9 @@ package com.example.a0603614.udacity_baking.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Ingredient implements Parcelable {
+import java.io.Serializable;
+
+public class Ingredient implements Parcelable, Serializable {
     public double quantity;
     public String measure;
     public String ingredient;

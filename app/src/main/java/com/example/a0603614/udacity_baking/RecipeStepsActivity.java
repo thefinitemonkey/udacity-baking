@@ -1,6 +1,7 @@
 package com.example.a0603614.udacity_baking;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -157,7 +158,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
         Intent showDetails = new Intent(this, destinationClass);
         showDetails.putExtra(
                 getResources().getString(R.string.recipe_data_intent_extra),
-                mRecipe
+                (Parcelable)mRecipe
         );
         if (position == 0) {
             showDetails.putExtra(

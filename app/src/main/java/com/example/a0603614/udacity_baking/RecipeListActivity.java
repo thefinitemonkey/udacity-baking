@@ -2,6 +2,7 @@ package com.example.a0603614.udacity_baking;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.content.res.Configuration;
@@ -93,7 +94,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeAdapt
         Intent showRecipeSteps = new Intent(this, destinationClass);
         showRecipeSteps.putExtra(
                 getResources().getString(R.string.recipe_data_intent_extra),
-                mRecipeAdapter.getRecipeObj(itemIndex)
+                (Parcelable)mRecipeAdapter.getRecipeObj(itemIndex)
         );
         startActivityForResult(showRecipeSteps, RESULT_CODE);
     }

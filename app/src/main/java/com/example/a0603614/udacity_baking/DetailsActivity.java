@@ -1,14 +1,18 @@
 package com.example.a0603614.udacity_baking;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.a0603614.udacity_baking.fragments.IngredientListFragment;
 import com.example.a0603614.udacity_baking.fragments.StepDetailsFragment;
 import com.example.a0603614.udacity_baking.objects.Recipe;
 import com.example.a0603614.udacity_baking.objects.Step;
+import com.example.a0603614.udacity_baking.widgets.IngredientListWidgetProvider;
 
 import java.util.List;
 
@@ -17,6 +21,7 @@ public class DetailsActivity extends AppCompatActivity {
     private Recipe mRecipe;
     private String mDetailType;
     private int mStepPos;
+    private Context mContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

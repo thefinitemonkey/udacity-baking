@@ -3,7 +3,9 @@ package com.example.a0603614.udacity_baking.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Step implements Parcelable {
+import java.io.Serializable;
+
+public class Step implements Parcelable, Serializable {
     public int id;
     public String shortDescription;
     public String description;

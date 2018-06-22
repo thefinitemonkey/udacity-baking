@@ -21,7 +21,7 @@
         <activity android:name=".RecipeStepsActivity" />
         <activity android:name=".DetailsActivity" />
 
-        <receiver android:name=".widgets.IngredientListWidget">
+        <receiver android:name=".widgets.IngredientListWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -30,6 +30,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/ingredient_list_widget_info" />
         </receiver>
+
+        <service android:name=".services.IngredientWidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
     </application>
 
 </manifest>
