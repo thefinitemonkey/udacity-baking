@@ -20,7 +20,7 @@ import java.util.List;
 
 public class RecipeStepsActivity extends AppCompatActivity implements RecipeStepListFragment.StepListClickListener {
 
-    private static final int RESULT_CODE = 2008;
+    private static final int REQUEST_CODE = 2008;
     private Recipe mRecipe;
     private String[] mSteps;
     private boolean mIsTablet = false;
@@ -48,6 +48,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
         // Get the Recipe from the intent
         mRecipe = getIntent().getParcelableExtra(
                 getResources().getString(R.string.recipe_data_intent_extra));
+        if (mRecipe == null) return;
 
         // Build the mSteps array from the recipe data
         int stepCount = mRecipe.steps.size();
@@ -202,6 +203,15 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
         }
         showDetails.putExtra(
                 getResources().getString(R.string.recipe_detail_step_position), position - 1);
-        startActivityForResult(showDetails, RESULT_CODE);
+        startActivityForResult(showDetails, REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CODE) return;
+
+        mRecipe = data.getParcelableExtra(getResources().getString(R.string.recipe_data_intent_extra));
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

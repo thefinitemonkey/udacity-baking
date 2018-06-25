@@ -53,7 +53,11 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
 
     public void setStepsData(String[] steps) {
         mSteps = steps;
-        mItemCount = mSteps.length;
+        if (mSteps == null) {
+            mItemCount = 0;
+        } else {
+            mItemCount = mSteps.length;
+        }
         notifyDataSetChanged();
     }
 

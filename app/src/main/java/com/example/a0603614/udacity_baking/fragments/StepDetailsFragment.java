@@ -122,8 +122,8 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mResumeVideoPosition = mExoPlayer.getCurrentPosition();
         if (mExoPlayer != null) {
+            mResumeVideoPosition = mExoPlayer.getCurrentPosition();
             mExoPlayer.release();
             mExoPlayer = null;
         }
@@ -186,7 +186,9 @@ public class StepDetailsFragment extends Fragment {
         Context context = getActivity();
         if (mRecipeStep.videoURL == null || mRecipeStep.videoURL.isEmpty()) {
             // Remove the view with the exo player
-            mExoPlayer.release();
+            if (mExoPlayer != null) {
+                mExoPlayer.release();
+            }
             ((ViewGroup) mExoView.getParent()).removeView(mExoView);
 
             // Set the text view to attach to the parent view

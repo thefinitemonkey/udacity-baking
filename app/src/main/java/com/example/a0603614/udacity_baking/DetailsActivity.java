@@ -1,11 +1,14 @@
 package com.example.a0603614.udacity_baking;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,6 +22,7 @@ import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
 
+    private static final int RESULT_CODE = 2008;
     private Recipe mRecipe;
     private String mDetailType;
     private int mStepPos;
@@ -129,6 +133,28 @@ public class DetailsActivity extends AppCompatActivity {
             outState.putBoolean(
                     getResources().getString(R.string.video_playback_playing), resumePlaying);
         }
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        prepareReturnToParent();
+        super.onBackPressed();
+    }
+
+    private void prepareReturnToParent() {
+        Intent intent = new Intent();
+        intent.putExtra(
+                getResources().getString(R.string.recipe_data_intent_extra), (Parcelable) mRecipe);
+        setResult(RESULT_CODE, intent);
     }
 }
