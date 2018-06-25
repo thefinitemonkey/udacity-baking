@@ -23,4 +23,7 @@
 
     <string name="widget_recipe_key">recipeForWidgetDisplay</string>
 
+    <string name="video_playback_marker">videoTimeMarker</string>
+    <string name="video_playback_playing">videoIsPlaying</string>
+
 </resources>

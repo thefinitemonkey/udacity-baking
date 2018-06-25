@@ -1,6 +1,7 @@
 package com.example.a0603614.udacity_baking;
 
 import android.content.Context;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,11 +23,21 @@ public class DetailsActivity extends AppCompatActivity {
     private String mDetailType;
     private int mStepPos;
     private Context mContext = this;
+    private StepDetailsFragment mStepDetailsFragment;
+    private long mResumeVideoPosition;
+    private Boolean mResumeVideoPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        if (savedInstanceState != null) {
+            mResumeVideoPlaying = savedInstanceState.getBoolean(
+                    getResources().getString(R.string.video_playback_playing));
+            mResumeVideoPosition = savedInstanceState.getLong(
+                    getResources().getString(R.string.video_playback_marker));
+        }
 
         // Get the recipe object from the intent
         mRecipe = getIntent().getParcelableExtra(
@@ -47,6 +58,7 @@ public class DetailsActivity extends AppCompatActivity {
                 getResources().getString(R.string.recipe_detail_step))) {
             assembleStepScreen();
         }
+
     }
 
     private void clearDetailScreen() {
@@ -85,12 +97,16 @@ public class DetailsActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putParcelable(
                 getResources().getString(R.string.recipe_step_data_intent_extra), step);
-        StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
-        stepDetailsFragment.setArguments(bundle);
+        bundle.putBoolean(
+                getResources().getString(R.string.video_playback_playing), mResumeVideoPlaying);
+        bundle.putLong(
+                getResources().getString(R.string.video_playback_marker), mResumeVideoPosition);
+        mStepDetailsFragment = new StepDetailsFragment();
+        mStepDetailsFragment.setArguments(bundle);
 
         // Add the fragment to the display
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().add(R.id.cl_details_display, stepDetailsFragment).commit();
+        fm.beginTransaction().add(R.id.cl_details_display, mStepDetailsFragment).commit();
 
         // Set the title of the screen accordingly
         try {
@@ -99,5 +115,20 @@ public class DetailsActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mStepDetailsFragment != null) {
+            long resumePosition = mStepDetailsFragment.getResumeVideoPosition();
+            Boolean resumePlaying = mStepDetailsFragment.getResumeVideoIsPlaying();
+            outState.putLong(
+                    getResources().getString(R.string.video_playback_marker), resumePosition);
+            outState.putBoolean(
+                    getResources().getString(R.string.video_playback_playing), resumePlaying);
+        }
+
     }
 }

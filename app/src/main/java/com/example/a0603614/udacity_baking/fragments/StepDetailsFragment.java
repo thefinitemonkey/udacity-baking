@@ -3,8 +3,10 @@ package com.example.a0603614.udacity_baking.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.example.a0603614.udacity_baking.R;
 import com.example.a0603614.udacity_baking.objects.Step;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -43,6 +46,10 @@ public class StepDetailsFragment extends Fragment {
     private SimpleExoPlayerView mExoView;
     private ExoPlayer mExoPlayer;
     private Step mRecipeStep;
+    private Boolean mIsPlaying = false;
+    private long mResumeVideoPosition;
+    private Boolean mResumeVideoIsPlaying = false;
+    private static String TAG = StepDetailsFragment.class.getSimpleName() + "=======>>>";
 
 
     public StepDetailsFragment() {
@@ -57,10 +64,15 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Get the recipe object from the fragment arguments
         mRecipeStep = getArguments().getParcelable(
                 getResources().getString(R.string.recipe_step_data_intent_extra));
+        mResumeVideoPosition = getArguments().getLong(
+                getResources().getString(R.string.video_playback_marker));
+        mResumeVideoIsPlaying = getArguments().getBoolean(
+                getResources().getString(R.string.video_playback_playing));
+        Log.i(TAG, "onCreateView: mResumeVideoPosition set to " + mResumeVideoPosition);
+        Log.i(TAG, "onCreateView: mResumeVideoIsPlaying set to " + mResumeVideoIsPlaying);
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_step_details, container, false);
@@ -68,15 +80,53 @@ public class StepDetailsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        // Initialize the video player
-        initializePlayer();
-
         // Determine what items to put into the fragment view
         assemblePortraitView();
 
-
         // Return the complete view
         return view;
+    }
+
+    public long getResumeVideoPosition() {
+        return mResumeVideoPosition;
+    }
+
+    public Boolean getResumeVideoIsPlaying() {
+        return mIsPlaying;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        // Save the playback position and state
+        outState.putLong(getResources().getString(R.string.video_playback_marker), mResumeVideoPosition);
+        outState.putBoolean(getResources().getString(R.string.video_playback_playing), mIsPlaying);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Video will initialize only if there is video to play
+        if (mRecipeStep.videoURL != null && !mRecipeStep.videoURL.isEmpty()) {
+            // Initialize the video player
+            initializePlayer();
+
+            Log.i(TAG, "onResume: seeking to position " + mResumeVideoPosition);
+            mExoPlayer.seekTo(mResumeVideoPosition);
+            Log.i(TAG, "onResume: setting play when ready " + mResumeVideoIsPlaying);
+            mExoPlayer.setPlayWhenReady(mResumeVideoIsPlaying);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mResumeVideoPosition = mExoPlayer.getCurrentPosition();
+        if (mExoPlayer != null) {
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     @Override
@@ -89,6 +139,7 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void initializePlayer() {
+
         // Create default track selector
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
@@ -98,33 +149,42 @@ public class StepDetailsFragment extends Fragment {
         // Initialize the player
         mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
 
+        // Create DataSource instance for video
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
+                getActivity(), Util.getUserAgent(
+                getActivity(), "recipeStepVideo"));
+
+        // Create extractor for parsing media data
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+
+        // Set video to be played
+        Uri videoUri = Uri.parse(mRecipeStep.videoURL);
+        MediaSource videoSource = new ExtractorMediaSource(
+                videoUri, dataSourceFactory, extractorsFactory, null, null);
+
+        // Prepare the player with the source
+        mExoPlayer.prepare(videoSource);
+        mExoPlayer.setPlayWhenReady(false);
+
+        mExoPlayer.addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playWhenReady && playbackState == Player.STATE_READY) {
+                    mIsPlaying = true;
+                } else {
+                    mIsPlaying = false;
+                }
+            }
+        });
+
         // Initialize the SimpleExoPlayerView
         mExoView.setPlayer(mExoPlayer);
     }
 
     private void assemblePortraitView() {
-        // If the step has video set the video. Otherwise remove it from the fragment.
+        // If the step doesn't have video then remove it from the fragment.
         Context context = getActivity();
-        if (mRecipeStep.videoURL != null && !mRecipeStep.videoURL.isEmpty()) {
-
-            // Create DataSource instance for video
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
-                    getActivity(), Util.getUserAgent(
-                    getActivity(), "recipeStepVideo"));
-
-            // Create extractor for parsing media data
-            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-
-            // Set video to be player
-            Uri videoUri = Uri.parse(mRecipeStep.videoURL);
-            MediaSource videoSource = new ExtractorMediaSource(
-                    videoUri, dataSourceFactory, extractorsFactory, null, null);
-
-            // Prepare the player with the source
-            mExoPlayer.prepare(videoSource);
-            mExoPlayer.setPlayWhenReady(false);
-
-        } else {
+        if (mRecipeStep.videoURL == null || mRecipeStep.videoURL.isEmpty()) {
             // Remove the view with the exo player
             mExoPlayer.release();
             ((ViewGroup) mExoView.getParent()).removeView(mExoView);
@@ -156,10 +216,6 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if (mExoPlayer != null) {
-            mExoPlayer.release();
-            mExoPlayer = null;
-        }
     }
 
 }

@@ -26,11 +26,21 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
     private boolean mIsTablet = false;
     private int mPosition = 0;
     private boolean mRotated = false;
+    private StepDetailsFragment mStepDetailsFragment;
+    private long mResumePosition;
+    private Boolean mResumePlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_steps);
+
+        if (savedInstanceState != null) {
+            mResumePosition = savedInstanceState.getLong(
+                    getResources().getString(R.string.video_playback_marker));
+            mResumePlaying = savedInstanceState.getBoolean(
+                    getResources().getString(R.string.video_playback_playing));
+        }
 
         // Check if we're on tablet
         if (findViewById(R.id.cl_tablet_step_details) != null) mIsTablet = true;
@@ -61,6 +71,16 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("selectedPosition", mPosition);
         outState.putBoolean("wasRotated", true);
+
+        if (mStepDetailsFragment != null) {
+            long resumePosition = mStepDetailsFragment.getResumeVideoPosition();
+            Boolean resumePlaying = mStepDetailsFragment.getResumeVideoIsPlaying();
+            outState.putLong(
+                    getResources().getString(R.string.video_playback_marker), resumePosition);
+            outState.putBoolean(
+                    getResources().getString(R.string.video_playback_playing), resumePlaying);
+        }
+
         super.onSaveInstanceState(outState);
     }
 
@@ -68,13 +88,23 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mPosition = savedInstanceState.getInt("selectedPosition", 0);
         mRotated = savedInstanceState.getBoolean("wasRotated", false);
-
+        if (mStepDetailsFragment != null) {
+            mResumePosition = savedInstanceState.getLong(
+                    getResources().getString(R.string.video_playback_marker));
+            mResumePlaying = savedInstanceState.getBoolean(
+                    getResources().getString(R.string.video_playback_playing));
+        }
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // If we're in tablet mode then we also need to set up the details display
+        if (mIsTablet) {
+            setTabletDetailsDisplay(mPosition);
+        }
 
         if (mRotated) return;
 
@@ -94,11 +124,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
             }
         } else {
             fm.beginTransaction().add(R.id.cl_tablet_steps_list, fragStepList).commit();
-        }
-
-        // If we're in tablet mode then we also need to set up the details display
-        if (mIsTablet) {
-            setTabletDetailsDisplay(mPosition);
         }
     }
 
@@ -120,9 +145,13 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
                     getResources().getString(R.string.recipe_step_data_intent_extra),
                     mRecipe.steps.get(position - 1)
             );
-            StepDetailsFragment detailsFragment = new StepDetailsFragment();
-            detailsFragment.setArguments(bundle);
-            fm.beginTransaction().add(R.id.cl_tablet_step_details, detailsFragment).commit();
+            bundle.putLong(
+                    getResources().getString(R.string.video_playback_marker), mResumePosition);
+            bundle.putBoolean(
+                    getResources().getString(R.string.video_playback_playing), mResumePlaying);
+            mStepDetailsFragment = new StepDetailsFragment();
+            mStepDetailsFragment.setArguments(bundle);
+            fm.beginTransaction().add(R.id.cl_tablet_step_details, mStepDetailsFragment).commit();
         }
     }
 
@@ -158,7 +187,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements RecipeStep
         Intent showDetails = new Intent(this, destinationClass);
         showDetails.putExtra(
                 getResources().getString(R.string.recipe_data_intent_extra),
-                (Parcelable)mRecipe
+                (Parcelable) mRecipe
         );
         if (position == 0) {
             showDetails.putExtra(
